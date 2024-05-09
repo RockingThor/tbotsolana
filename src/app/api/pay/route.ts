@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { encodeURL, findReference, validateTransfer } from "@solana/pay";
 import BigNumber from "bignumber.js";
@@ -105,9 +104,10 @@ export async function POST(req: Request, res: Response) {
 export async function GET(req: Request, res: Response) {
   // 1 - Get the reference query parameter from the NextApiRequest
   //get the query parameter
-  const data = await req.json();
-  console.log(data);
-  const { reference } = data;
+  // const data = await req.json();
+  console.log("Was here");
+  console.log(req.headers.get("reference"));
+  const reference = req.headers.get("reference");
   if (!reference) {
     return new NextResponse("Missing reference query parameter", {
       status: 400,
@@ -127,40 +127,5 @@ export async function GET(req: Request, res: Response) {
   } catch (error) {
     console.error("Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
-  }
-}
-
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Handle Generate Payment Requests
-  if (req.method === "POST") {
-    try {
-      const reference = new Keypair().publicKey;
-      const message = `QuickNode Demo - Order ID #0${
-        Math.floor(Math.random() * 999999) + 1
-      }`;
-      const urlData = await generateUrl(
-        recipient,
-        amount,
-        reference,
-        label,
-        message,
-        memo
-      );
-      const ref = reference.toBase58();
-      paymentRequests.set(ref, { recipient, amount, memo });
-      const { url } = urlData;
-      res.status(200).json({ url: url.toString(), ref });
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  } else if (req.method === "GET") {
-    console.log("Request received");
-    res
-      .status(200)
-      .json({ url: encodeURL({ recipient, amount, label, memo }) });
-    // Handle Invalid Requests
-  } else {
-    res.status(405).json({ error: "Method Not Allowed" });
   }
 }

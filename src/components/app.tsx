@@ -54,8 +54,10 @@ function App() {
   return (
     <>
       <div className="">
-        <h1 className="text-3xl items-center justify-center flex">
-          P3PT0
+        <div className=" flex items-center justify-between p-4">
+          <h1 className="text-3xl text-red-300 items-center justify-center flex">
+            Pepto
+          </h1>
           <div className="">
             <Dialog>
               <DialogTrigger asChild>
@@ -75,10 +77,10 @@ function App() {
               </DialogContent>
             </Dialog>
           </div>
-        </h1>
+        </div>
         <div className="items-center justify-center flex-col">
           {cardData.map((card) => (
-            <div className="p-2 w-[320px]" key={card.id}>
+            <div className="p-2 " key={card.id}>
               <Card>
                 <CardHeader>
                   <CardTitle>{card.ProductName}</CardTitle>

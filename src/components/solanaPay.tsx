@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { createQR } from "@solana/pay";
+import { Button } from "./ui/button";
+import axios from "axios";
 
 const Solanapay = () => {
   const [qrCode, setQrCode] = useState<string>();
@@ -29,27 +31,47 @@ const Solanapay = () => {
 
   const handleVerifyClick = async () => {
     // 1 - Check if the reference is set
-    if (!reference) {
-      alert("Please generate a payment order first");
-      return;
-    }
-    // 2 - Send a GET request to our backend and return the response status
-    const res = await fetch(`/api/pay?reference=${reference}`);
-    const { status } = await res.json();
+    try {
+      if (!reference) {
+        alert("Please generate a payment order first");
+        return;
+      }
+      // 2 - Send a GET request to our backend and return the response status
+      const res = await axios.get("/api/pay", {
+        headers: {
+          reference,
+        },
+      });
+      console.log(res);
+      // const { status } = await res.json();
+      if (res.status != 200) {
+        throw new Error(`Failed to fetch: ${res.status}`);
+      }
 
-    // 3 - Alert the user if the transaction was verified or not and reset the QR code and reference
-    if (status === "verified") {
-      alert("Transaction verified");
-      setQrCode(undefined);
-      setReference(undefined);
-    } else {
-      alert("Transaction not found");
+      // Check if response body is empty
+      if (res.headers["Content-Length"] === "0") {
+        throw new Error("Empty response received");
+      }
+
+      const { status } = await res.data();
+
+      // 3 - Alert the user if the transaction was verified or not and reset the QR code and reference
+      if (status === "verified") {
+        alert("Transaction verified");
+        setQrCode(undefined);
+        setReference(undefined);
+      } else {
+        alert("Transaction not found");
+      }
+    } catch (err) {
+      alert("Transaction is not yet confirmed");
+      console.error(err);
     }
   };
   return (
     <>
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <h1 className="text-2xl font-semibold">Solana Pay Demo</h1>
+        <h1 className="text-2xl font-semibold">Paying for your Pepto order</h1>
       </div>
       {qrCode && (
         <Image
@@ -62,20 +84,12 @@ const Solanapay = () => {
         />
       )}
 
-      <div>
-        <button
-          style={{ cursor: "pointer", padding: "10px", marginRight: "10px" }}
-          onClick={handleGenerateClick}
-        >
-          Generate Solana Pay Order
-        </button>
+      <div className="flex items-center justify-between p-2">
+        <Button onClick={handleGenerateClick}>Generate Solana Pay Order</Button>
         {reference && (
-          <button
-            style={{ cursor: "pointer", padding: "10px" }}
-            onClick={handleVerifyClick}
-          >
+          <Button onClick={handleVerifyClick} color={"green"}>
             Verify Transaction
-          </button>
+          </Button>
         )}
       </div>
     </>

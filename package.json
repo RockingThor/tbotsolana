@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-navigation-menu": "^1.1.4",
     "@radix-ui/react-slot": "^1.0.2",
     "@solana/pay": "^0.2.5",
     "@solana/web3.js": "^1.91.8",
+    "axios": "^1.6.8",
     "bigint-buffer": "^1.1.5",
     "bignumber.js": "^9.1.2",
     "class-variance-authority": "^0.7.0",

@@ -11,8 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { electronicProducts } from "@/data/data";
 import { Button } from "./ui/button";
-import { encodeURL, createQR } from "@solana/pay";
-import BigNumber from "bignumber.js";
 import { CardData, CartData } from "@/types/type";
 import {
   Dialog,
@@ -22,6 +20,8 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import Solanapay from "./solanaPay";
+
+import axios from "axios";
 
 interface CartProps {
   cartData: CartData[];
@@ -79,6 +79,9 @@ const Cart = ({ cartData }: CartProps) => {
       </div>
     );
   }
+  const transactionClosed = async () => {
+    const res = await axios.get("http://localhost:3002/close");
+  };
   return (
     <div className="">
       <div className="text-4xl justify-center items-center flex">
@@ -127,7 +130,11 @@ const Cart = ({ cartData }: CartProps) => {
             <Solanapay />
             <DialogFooter className="sm:justify-start">
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={transactionClosed}
+                >
                   Close
                 </Button>
               </DialogClose>
