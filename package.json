@@ -14,6 +14,8 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@solana/pay": "^0.2.5",
     "@solana/web3.js": "^1.91.8",
+    "@tma.js/sdk": "^1.5.3",
+    "@tma.js/sdk-react": "^2.0.3",
     "axios": "^1.6.8",
     "bigint-buffer": "^1.1.5",
     "bignumber.js": "^9.1.2",
@@ -24,6 +26,7 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "recoil": "^0.7.7",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },

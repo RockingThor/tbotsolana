@@ -105,8 +105,6 @@ export async function GET(req: Request, res: Response) {
   // 1 - Get the reference query parameter from the NextApiRequest
   //get the query parameter
   // const data = await req.json();
-  console.log("Was here");
-  console.log(req.headers.get("reference"));
   const reference = req.headers.get("reference");
   if (!reference) {
     return new NextResponse("Missing reference query parameter", {

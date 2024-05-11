@@ -22,6 +22,12 @@ import {
 import Solanapay from "./solanaPay";
 
 import axios from "axios";
+import { useRecoilValue } from "recoil";
+import {
+  cartDataSelectror,
+  cartItemNumber,
+  getFullDataCart,
+} from "@/recoil/selectors/selector";
 
 interface CartProps {
   cartData: CartData[];
@@ -32,17 +38,21 @@ interface CartProps {
 const Cart = ({ cartData }: CartProps) => {
   const [fullData, setFullData] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(false);
+  const cartSelectorData = useRecoilValue(cartDataSelectror);
+  const [alreadyLoaded, setAlreadyLoaded] = useState(false);
+  const cartRecoilData = useRecoilValue(getFullDataCart);
+  const cartNuberData = useRecoilValue(cartItemNumber);
 
   // useEffect(() => {
   //     telegram.ready();
   // }, []);
   const loadData = () => {
-    cartData.forEach((item) => {
+    cartSelectorData.forEach((item) => {
       const data = electronicProducts.find((product) => product.id === item.id);
-      if (data) {
-        setFullData([...fullData, data]);
-      }
+      fullData.push(data as CardData);
+      setFullData([...fullData]);
     });
+    console.log("FDDD", fullData);
   };
   const handleCheckout = async () => {
     setLoading(true);
@@ -66,10 +76,13 @@ const Cart = ({ cartData }: CartProps) => {
         }
       }
     });
-    return total;
+    return total.toFixed(2);
   };
   useEffect(() => {
-    loadData();
+    if (!alreadyLoaded) {
+      setAlreadyLoaded(true);
+      loadData();
+    }
   }, []);
   if (cartData.length === 0) {
     return (
@@ -98,7 +111,7 @@ const Cart = ({ cartData }: CartProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {fullData.map((item) => (
+            {cartRecoilData.map((item) => (
               <TableRow key={item.id}>
                 <TableCell className="font-medium">
                   {item.ProductName}

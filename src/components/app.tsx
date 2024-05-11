@@ -1,7 +1,7 @@
 "use client";
 import { electronicProducts } from "@/data/data";
 import { CardData, CartData } from "@/types/type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -21,48 +21,62 @@ import {
   CardTitle,
 } from "./ui/card";
 import Image from "next/image";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { cartState } from "@/recoil/atom/atom";
+import { cartItemNumber } from "@/recoil/selectors/selector";
 
 // const telegram = window.Telegram.WebApp;
 
 function App() {
   const [cartData, setCartData] = useState<CartData[]>([]);
   const cardData: CardData[] = electronicProducts;
+  const [numItem, setNumItem] = useState(0);
+  const [cartRecoilData, setCartRecoilData] = useRecoilState(cartState);
+  const cartNumberItem = useRecoilValue(cartItemNumber);
 
-  // useEffect(() => {
-  //     telegram.ready();
-  // }, []);
+  useEffect(() => {}, [numItem]);
 
   const handleRemove = (id: number) => {
+    const existingItemIndex = cartData.findIndex((item) => item.id === id);
+    if (existingItemIndex !== -1) {
+      setNumItem(numItem - cartData[existingItemIndex].quantity);
+    }
+    console.log(numItem);
     const updatedCartData: CartData[] = cartData.filter(
       (item) => item.id !== id
     );
     setCartData(updatedCartData);
+    setCartRecoilData(updatedCartData);
     console.log(cartData);
   };
 
   const addItem = (id: number) => {
+    setNumItem(numItem + 1);
     const existingItemIndex = cartData.findIndex((item) => item.id === id);
     if (existingItemIndex !== -1) {
       const updatedCartData = [...cartData];
-      updatedCartData[existingItemIndex].quantity++;
+      updatedCartData[existingItemIndex] = {
+        ...updatedCartData[existingItemIndex],
+        quantity: updatedCartData[existingItemIndex].quantity + 1,
+      };
       setCartData(updatedCartData);
+      setCartRecoilData(updatedCartData);
     } else {
       setCartData([...cartData, { id, quantity: 1 }]);
+      setCartRecoilData([...cartData, { id, quantity: 1 }]);
     }
-    console.log(cartData);
+    console.log(numItem);
   };
   return (
     <>
       <div className="">
         <div className=" flex items-center justify-between p-4">
-          <h1 className="text-3xl text-red-300 items-center justify-center flex">
-            Pepto
-          </h1>
+          <h1 className="text-3xl items-center justify-center flex">Pepto🚀</h1>
           <div className="">
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline">
-                  <ShoppingCartIcon />
+                  <ShoppingCartIcon /> {cartNumberItem}
                 </Button>
               </DialogTrigger>
               <DialogContent>
